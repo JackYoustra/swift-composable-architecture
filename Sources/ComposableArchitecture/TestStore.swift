@@ -2061,7 +2061,7 @@ public struct TestStoreTask: Hashable, Sendable {
   }
 }
 
-class TestReducer<State, Action>: Reducer {
+public class TestReducer<State, Action>: Reducer {
   let base: Reduce<State, Action>
   var dependencies: DependencyValues
   let effectDidSubscribe = AsyncStream.makeStream(of: Void.self)
@@ -2079,7 +2079,7 @@ class TestReducer<State, Action>: Reducer {
     self.state = initialState
   }
 
-  func reduce(into state: inout State, action: TestAction) -> Effect<TestAction> {
+  public func reduce(into state: inout State, action: TestAction) -> Effect<TestAction> {
     let reducer = self.base.dependency(\.self, self.dependencies)
 
     let effects: Effect<Action>
@@ -2135,16 +2135,26 @@ class TestReducer<State, Action>: Reducer {
     }
   }
 
-  struct TestAction {
+  public struct TestAction {
     let origin: Origin
     let file: StaticString
     let line: UInt
+
+    public init(
+      origin: Origin,
+      file: StaticString = #file,
+      line: UInt = #line
+    ) {
+      self.origin = origin
+      self.file = file
+      self.line = line
+    }
 
     fileprivate var action: Action {
       self.origin.action
     }
 
-    enum Origin {
+    public enum Origin {
       case receive(Action)
       case send(Action)
       fileprivate var action: Action {
